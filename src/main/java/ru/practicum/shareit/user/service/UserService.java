@@ -45,7 +45,7 @@ public class UserService {
             throw new ValidationException("User ID cannot be null.");
         }
         UserDto resultUserDto = storage.findById(userId);
-        if ( resultUserDto == null ) {
+        if (resultUserDto == null) {
             String message = "User not found";
             log.warn(message);
             throw new NotFoundException(message);
