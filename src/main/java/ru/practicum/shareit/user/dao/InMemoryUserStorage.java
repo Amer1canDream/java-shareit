@@ -68,7 +68,6 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public List<UserDto> getUsers() {
-        List<User> usersList = new ArrayList<User>(users.values());
         return users.values()
                 .stream()
                 .map(UserMapper::toUserDto)
