@@ -10,9 +10,13 @@ import java.util.Date;
  */
 @Data
 public class ItemRequest {
+
     private Integer id;
+
     private String description;
+
     private User requestor;
+
     private Date created;
-    public ItemRequest () {}
+
 }

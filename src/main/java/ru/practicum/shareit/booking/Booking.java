@@ -13,14 +13,18 @@ import java.util.Date;
  */
 @Data
 public class Booking {
+
     @NotNull
     @NotBlank
     private Integer id;
-    private Date start;
-    private Date end;
-    private Item item;
-    private User booker;
-    private BookingStatus status;
 
-    public Booking() {}
+    private Date start;
+
+    private Date end;
+
+    private Item item;
+
+    private User booker;
+
+    private BookingStatus status;
 }

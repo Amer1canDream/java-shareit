@@ -13,7 +13,7 @@ import java.util.Objects;
 
 @Slf4j
 @Component
-public class InMemoryItemStorage implements ItemStorage{
+public class InMemoryItemStorage implements ItemStorage {
 
     private int id = 0;
     private HashMap<Integer, Item> items = new HashMap<>();

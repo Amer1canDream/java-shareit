@@ -6,10 +6,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dao.UserStorage;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.mapper.UserMapper;
 
 import javax.validation.ValidationException;
 import java.util.List;
@@ -48,7 +46,7 @@ public class UserService {
         }
         UserDto resultUserDto = storage.findById(userId);
         if ( resultUserDto == null ) {
-            String message = ("User not found");
+            String message = "User not found";
             log.warn(message);
             throw new NotFoundException(message);
         }
