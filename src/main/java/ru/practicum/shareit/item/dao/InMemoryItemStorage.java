@@ -53,7 +53,7 @@ public class InMemoryItemStorage implements ItemStorage {
         items.put(storedItem.getId(), storedItem);
         return items.get(storedItem.getId());
     }
-    
+
     @Override
     public List<Item> findByUser(Integer userId) {
         List<Item> userItems = new ArrayList<>();
