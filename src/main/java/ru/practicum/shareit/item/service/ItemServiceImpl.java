@@ -32,14 +32,12 @@ import java.util.stream.Stream;
 import static java.time.LocalDateTime.now;
 import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static ru.practicum.shareit.booking.model.BookingTimeState.PAST;
 import static ru.practicum.shareit.item.mapper.CommentMapper.mapToComment;
 import static ru.practicum.shareit.item.mapper.CommentMapper.mapToCommentDto;
 import static ru.practicum.shareit.item.mapper.ItemMapper.*;
 import static ru.practicum.shareit.user.mapper.UserMapper.toUser;
-import static ru.practicum.shareit.user.mapper.UserMapper.toUserDto;
 import static ru.practicum.shareit.utils.Pagination.makePageRequest;
 
 @Slf4j

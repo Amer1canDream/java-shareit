@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.*;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
@@ -57,6 +56,7 @@ public class ItemController {
                                 @RequestParam(required = false) String text) {
         return itemService.search(text, userId, from, size);
     }
+
     @PostMapping("{itemId}/comment")
     public CommentDto saveComment(@RequestHeader(value = HEADER_SHARER_USER_ID, required = false) Integer userId,
                                   @RequestBody CommentDto commentDto,

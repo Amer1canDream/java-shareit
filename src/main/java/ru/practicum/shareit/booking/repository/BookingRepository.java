@@ -111,5 +111,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     List<Booking> getAllByItemOwnerIdOrderByStartDesc(Integer userId);
 
     Booking getFirstByItemIdAndEndBeforeOrderByEndDesc(Integer itemId, LocalDateTime end);
+
     Booking getTopByItemIdAndStartAfterOrderByStartAsc(Integer itemId, LocalDateTime start);
+
 }

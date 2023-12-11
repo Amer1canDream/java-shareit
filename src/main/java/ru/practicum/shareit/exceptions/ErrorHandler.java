@@ -16,6 +16,7 @@ public class ErrorHandler {
     public ErrorResponse handleConflictException(final ConflictException e) {
         return new ErrorResponse(e.getMessage());
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(final NotFoundException e) {
