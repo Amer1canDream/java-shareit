@@ -3,7 +3,8 @@ package ru.practicum.shareit.item;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
@@ -31,26 +32,35 @@ public class ItemController {
                             @RequestBody ItemDto itemDto,
                             @PathVariable Integer itemId) {
         log.debug("Патч вещи с id {} у пользователя с id {}", itemId, userId);
-        return itemService.update(itemDto, userId, itemId);
+        itemDto.setId(itemId);
+        return itemService.update(itemDto, userId);
     }
 
     @GetMapping("/{itemId}")
     public ItemDto get(@RequestHeader(value = HEADER_SHARER_USER_ID, required = false) Integer userId,
                        @PathVariable Integer itemId) {
         log.debug("Поиск вещи с id {} у пользователя с id {}", itemId, userId);
-        return itemService.get(itemId);
+        return itemService.get(itemId, userId);
     }
 
     @GetMapping()
-    public List<ItemDto> getByUser(@RequestHeader(value = HEADER_SHARER_USER_ID, required = false) Integer userId) {
-        log.debug("Поиск всех вещей у пользователя {} id", userId);
-        return itemService.getByUser(userId);
+    public List<ItemDtoWithBooking> getAllItems(@RequestHeader(value = HEADER_SHARER_USER_ID, required = false) Integer userId,
+                                                @RequestParam(required = false) Integer from,
+                                                @RequestParam(required = false) Integer size) {
+        return itemService.getAllItems(userId, from, size);
     }
 
     @GetMapping("/search")
     public List<ItemDto> search(@RequestHeader(value = HEADER_SHARER_USER_ID, required = false) Integer userId,
+                                @RequestParam(required = false) Integer from,
+                                @RequestParam(required = false) Integer size,
                                 @RequestParam(required = false) String text) {
-        log.debug("Поиск строки {} у пользователя {} id", text, userId);
-        return itemService.search(text);
+        return itemService.search(text, userId, from, size);
+    }
+    @PostMapping("{itemId}/comment")
+    public CommentDto saveComment(@RequestHeader(value = HEADER_SHARER_USER_ID, required = false) Integer userId,
+                                  @RequestBody CommentDto commentDto,
+                                  @PathVariable Integer itemId) {
+        return itemService.saveComment(commentDto, itemId, userId);
     }
 }
