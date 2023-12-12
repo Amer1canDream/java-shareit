@@ -5,6 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import ru.practicum.shareit.booking.dto.BookingAllFieldsDto;
+import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.user.model.User;
@@ -113,5 +115,13 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     Booking getFirstByItemIdAndEndBeforeOrderByEndDesc(Integer itemId, LocalDateTime end);
 
     Booking getTopByItemIdAndStartAfterOrderByStartAsc(Integer itemId, LocalDateTime start);
+
+    @Query("select b from Booking b where b.item.id = ?1 and " +
+            "b.item.owner.id = ?2 and status not like 'REJECTED' and b.start <= ?3 order by b.end desc")
+    List<Booking> findLastBookingByItemId(Integer itemId, Integer userId, LocalDateTime now);
+
+    @Query("select b from Booking b where b.item.id = ?1 and " +
+            "b.item.owner.id = ?2 and status not like 'REJECTED' and b.start >= ?3 order by b.start asc")
+    List<Booking> findNextBookingByItemId(Integer itemId, Integer userId, LocalDateTime now);
 
 }

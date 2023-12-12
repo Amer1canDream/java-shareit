@@ -87,10 +87,17 @@ public class ItemServiceImpl implements ItemService {
         var item = itemRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("Item with id#" + id + " does not exist"));
         var comments = getAllComments(id);
-        var bookings = bookingService.getBookingsByItem(item.getId(), userId);
+        var lastBooking = bookingRepository.findLastBookingByItemId(item.getId(), userId, LocalDateTime.now())
+                .stream()
+                .findFirst()
+                .orElse(null);
+        var nextBooking = bookingRepository.findNextBookingByItemId(item.getId(), userId, LocalDateTime.now())
+                .stream()
+                .findFirst().orElse(null);;
+
         return mapToItemAllFieldsDto(item,
-                getLastItem(bookings),
-                getNextItem(bookings),
+                lastBooking,
+                nextBooking,
                 comments);
     }
 

@@ -19,7 +19,7 @@ public interface BookingService {
 
     List<BookingAllFieldsDto> getBookingsByOwnerId(Integer userId, BookingTimeState state, Integer from, Integer size);
 
-    List<BookingAllFieldsDto> getBookingsByItem(Integer itemId, Integer userId);
+
 
     List<BookingAllFieldsDto> getAllBookings(Integer bookerId, String state);
 

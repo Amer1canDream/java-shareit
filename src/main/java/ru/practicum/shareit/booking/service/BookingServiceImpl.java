@@ -92,15 +92,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingAllFieldsDto> getBookingsByItem(Integer itemId, Integer userId) {
-        return bookingRepository
-                .findBookingsByItem_IdAndItem_Owner_IdIsOrderByStart(itemId, userId)
-                .stream()
-                .map(BookingMapper::mapToBookingAllFieldsDto)
-                .collect(toList());
-    }
-
-    @Override
     public List<BookingAllFieldsDto> getAllBookings(Integer bookerId, String state) {
         Stream<Booking> stream = null;
         var userDto = userService.get(bookerId);

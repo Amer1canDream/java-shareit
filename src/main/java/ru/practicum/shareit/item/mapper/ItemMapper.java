@@ -11,6 +11,8 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ru.practicum.shareit.booking.mapper.BookingMapper.*;
+
 @Component
 public class ItemMapper {
 
@@ -34,8 +36,8 @@ public class ItemMapper {
     }
 
     public static ItemAllFieldsDto mapToItemAllFieldsDto(Item item,
-                                                         BookingAllFieldsDto lastBooking,
-                                                         BookingAllFieldsDto nextBooking,
+                                                         Booking lastBooking,
+                                                         Booking nextBooking,
                                                          List<CommentDto> comments) {
         return new ItemAllFieldsDto(
                 item.getId(),
