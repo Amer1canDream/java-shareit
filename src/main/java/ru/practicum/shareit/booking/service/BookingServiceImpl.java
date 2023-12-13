@@ -193,9 +193,6 @@ public class BookingServiceImpl implements BookingService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(String.format("owner with id %d is not found", userId)));
         List<Booking> bookings = bookingRepository.getAllByItemOwnerIdOrderByStartDesc(userId);
-        if (bookings.isEmpty()) {
-            throw new NotFoundException("he has no reservations");
-        }
         getState(state.name());
         LocalDateTime localDateTime = LocalDateTime.now();
         Pageable pageable = PageRequest.of(from / size, size);
