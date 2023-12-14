@@ -17,10 +17,6 @@ public interface BookingService {
 
     BookingAllFieldsDto approve(Integer bookingId, boolean approved, Integer userId);
 
-    List<BookingAllFieldsDto> getBookingsByOwnerId(Integer userId, BookingTimeState state, Integer from, Integer size);
-
-
-
     List<BookingAllFieldsDto> getAllBookings(Integer bookerId, String state);
 
     BookingAllFieldsDto getBookingById(Integer bookingId, Integer userId);

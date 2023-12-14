@@ -2,7 +2,6 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -23,10 +22,8 @@ import ru.practicum.shareit.user.service.UserService;
 import javax.validation.ValidationException;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.time.LocalDateTime.now;
@@ -187,41 +184,10 @@ public class BookingServiceImpl implements BookingService {
         else
             throw new ValidationException("Unknown state: " + state);
     }
-
-    @Override
-    public List<BookingAllFieldsDto> getBookingsByOwnerId(Integer userId, BookingTimeState state, Integer from, Integer size) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(String.format("owner with id %d is not found", userId)));
-        List<Booking> bookings = bookingRepository.getAllByItemOwnerIdOrderByStartDesc(userId);
-        getState(state.name());
-        LocalDateTime localDateTime = LocalDateTime.now();
-        Pageable pageable = PageRequest.of(from / size, size);
-        switch (state) {
-            case ALL:
-                bookings = bookingRepository.getOwnerAll(userId, pageable);
-                break;
-            case FUTURE:
-                bookings = bookingRepository.getOwnerFuture(userId, localDateTime, pageable);
-                break;
-            case CURRENT:
-                bookings = bookingRepository.getOwnerCurrent(userId, localDateTime, pageable);
-                break;
-            case WAITING:
-                bookings = bookingRepository.getAllByItemOwnerIdAndStatus(userId, BookingStatus.WAITING, pageable);
-                break;
-            case PAST:
-                bookings = bookingRepository.getOwnerPast(userId, localDateTime, pageable);
-                break;
-            case REJECTED:
-                bookings = bookingRepository.getAllByItemOwnerIdAndStatus(userId, BookingStatus.REJECTED, pageable);
-                break;
-        }
-        return bookings
-                .stream()
-                .map(BookingMapper::mapToBookingAllFieldsDto)
-                .collect(Collectors.toList());
-    }
-
+    /**
+    Было два метода, один метод лишний с тем замечанием, что вы указали. В текущем методе такая проверка не нужна.
+     И это 14 ТЗ еще, хотя я наперед добавил сюда фич из 15.
+     */
     @Override
     public List<BookingAllFieldsDto> getBookingsByOwnerId(Integer userId, String state, Integer from, Integer size) {
         Stream<Booking> stream = null;
@@ -297,6 +263,12 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidationException("Incorrect end booking date");
         if (bookingSavingDto.getStart().equals(bookingSavingDto.getEnd()))
             throw new ValidationException("Start and end date the same");
+    }
+
+    private void validateListOfBookings(List<Booking> bookingList) {
+        if (bookingList.isEmpty()) {
+            throw new NotFoundException("There are not bookings for that user");
+        }
     }
 
     private static BookingTimeState getState(String stateStr) {
