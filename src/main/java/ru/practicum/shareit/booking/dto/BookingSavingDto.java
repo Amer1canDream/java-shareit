@@ -5,14 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * TODO Sprint add-bookings.
- */
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookingDto {
+public class BookingSavingDto {
     private Integer id;
-    private Integer bookerId;
+    private LocalDateTime start;
+    private LocalDateTime end;
+    private Integer itemId;
+    private Integer booker;
+    private String status;
 }
