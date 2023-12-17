@@ -8,11 +8,11 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
-public interface ItemRequestRepository extends JpaRepository<ru.practicum.shareit.request.model.ItemRequest, Integer> {
+public interface ItemRequestRepository extends JpaRepository<ItemRequest, Integer> {
 
-    Page<ru.practicum.shareit.request.model.ItemRequest> findItemRequestByRequester_IdIsNotOrderByCreatedDesc(Integer userId, Pageable pageable);
+    Page<ItemRequest> findItemRequestByRequester_IdIsNotOrderByCreatedDesc(Integer userId, Pageable pageable);
 
-    List<ru.practicum.shareit.request.model.ItemRequest> findItemRequestByRequester_IdIsNotOrderByCreatedDesc(Integer userId);
+    List<ItemRequest> findItemRequestByRequester_IdIsNotOrderByCreatedDesc(Integer userId);
 
     List<ItemRequest> findItemRequestByRequesterOrderByCreatedDesc(User user);
 }

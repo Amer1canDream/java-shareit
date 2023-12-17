@@ -26,6 +26,7 @@ public class ItemRequestMapperTest {
     Booking booking;
     @Autowired
     private JacksonTester<ItemRequestDto> itemRequestDtoJacksonTester;
+
     @BeforeEach
     void beforeEach() {
         user = new User(1, "User1", "user@email.ru");
