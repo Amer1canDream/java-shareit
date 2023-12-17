@@ -1,117 +1,140 @@
 package ru.practicum.shareit.user.controller;
 
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import ru.practicum.shareit.user.UserController;
-import ru.practicum.shareit.user.service.UserService;
-import ru.practicum.shareit.exceptions.NotFoundException;
-import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ru.practicum.shareit.exceptions.EmailException;
-import ru.practicum.shareit.user.dto.UserDto;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.user.UserController;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.service.UserService;
 
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.http.MediaType.*;
-import static java.nio.charset.StandardCharsets.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.when;
 
 @WebMvcTest(controllers = UserController.class)
 class UserControllerTest {
-    @MockBean
-    UserService userService;
+
     @Autowired
     ObjectMapper mapper;
+
+    @MockBean
+    UserService mockUserService;
+
     @Autowired
     private MockMvc mvc;
 
-    private final UserDto userDto = UserDto.builder()
-            .id(1)
-            .name("Michael")
-            .email("michael@mail.com")
-            .build();
+    private UserDto userDtoCreateTest;
+
+    private UserDto userDtoCreated;
+
+    private UserDto userDtoUpdateTest;
+
+    private UserDto userDtoUpdated;
+
+    @BeforeEach
+    void setUp() {
+        userDtoCreateTest = UserDto.builder()
+                .name("userCreate")
+                .email("userTest@email.com")
+                .build();
+        userDtoCreated = UserDto.builder()
+                .id(1)
+                .name("userCreate")
+                .email("userTest@email.com")
+                .build();
+        userDtoUpdateTest = UserDto.builder()
+                .name("userUpdate")
+                .build();
+        userDtoUpdated = UserDto.builder()
+                .id(1)
+                .name("userUpdate")
+                .email("userTest@email.com")
+                .build();
+    }
+
+    @AfterEach
+    void tearDown() {
+        userDtoCreateTest = null;
+        userDtoCreated = null;
+        userDtoUpdateTest = null;
+        userDtoUpdated = null;
+    }
 
     @Test
-    void saveTest() throws Exception {
-        when(userService.save(any(UserDto.class)))
-                .thenReturn(userDto);
+    void create() throws Exception {
+        when(mockUserService.save(userDtoCreateTest))
+                .thenReturn(userDtoCreated);
+
         mvc.perform(post("/users")
-                        .content(mapper.writeValueAsString(userDto))
-                        .contentType(APPLICATION_JSON)
-                        .characterEncoding(UTF_8)
-                        .accept(APPLICATION_JSON)
-                )
-                .andExpect(jsonPath("$.id", is(userDto.getId()), Integer.class))
-                .andExpect(jsonPath("$.email", is(userDto.getEmail())))
-                .andExpect(jsonPath("$.name", is(userDto.getName())))
+                        .content(mapper.writeValueAsString(userDtoCreateTest))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(userDtoCreated.getId()), Integer.class))
+                .andExpect(jsonPath("$.name", is(userDtoCreated.getName())))
+                .andExpect(jsonPath("$.email", is(userDtoCreated.getEmail())));
+    }
+
+    @Test
+    void update() throws Exception {
+        when(mockUserService.update(userDtoUpdateTest, 1))
+                .thenReturn(userDtoUpdated);
+
+        mvc.perform(patch("/users/1")
+                        .content(mapper.writeValueAsString(userDtoUpdateTest))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(userDtoUpdated.getId()), Integer.class))
+                .andExpect(jsonPath("$.name", is(userDtoUpdated.getName())))
+                .andExpect(jsonPath("$.email", is(userDtoUpdated.getEmail())));
+    }
+
+    @Test
+    void getUserDto() throws Exception {
+        when(mockUserService.get(1))
+                .thenReturn(userDtoUpdated);
+
+        mvc.perform(get("/users/1")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(userDtoUpdated.getId()), Integer.class))
+                .andExpect(jsonPath("$.name", is(userDtoUpdated.getName())))
+                .andExpect(jsonPath("$.email", is(userDtoUpdated.getEmail())));
+    }
+
+    @Test
+    void deleteUserDto() throws Exception {
+        mvc.perform(delete("/users/1")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(mockUserService).delete(1);
     }
 
     @Test
-    void updateTest() throws Exception {
-        when(userService.update(any(), anyInt()))
-                .thenReturn(userDto);
-        mvc.perform(patch("/users/{userId}", 1)
-                        .content(mapper.writeValueAsString(userDto))
-                        .contentType(APPLICATION_JSON)
-                        .characterEncoding(UTF_8)
-                        .accept(APPLICATION_JSON)
-                )
-                .andExpect(jsonPath("$.id", is(userDto.getId()), Integer.class))
-                .andExpect(jsonPath("$.email", is(userDto.getEmail())))
-                .andExpect(jsonPath("$.name", is(userDto.getName())))
-                .andExpect(status().isOk());
-    }
+    void getAll() throws Exception {
+        when(mockUserService.getUsers())
+                .thenReturn(List.of(userDtoUpdated));
 
-    @Test
-    void getUserByIdTest() throws Exception {
-        when(userService.get(any()))
-                .thenReturn(userDto);
-        mvc.perform(get("/users/{userId}", 1)
-                        .content(mapper.writeValueAsString(userDto))
-                        .contentType(APPLICATION_JSON)
-                        .characterEncoding(UTF_8)
-                        .accept(APPLICATION_JSON)
-                )
-                .andExpect(jsonPath("$.id", is(userDto.getId()), Integer.class))
-                .andExpect(jsonPath("$.email", is(userDto.getEmail())))
-                .andExpect(jsonPath("$.name", is(userDto.getName())))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void deleteUserByIdTest() throws Exception {
-        mvc.perform(delete("/users/{userId}", 1)
-                        .contentType(APPLICATION_JSON)
-                        .accept(APPLICATION_JSON)
-                )
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void saveUserEmailExceptionTest() throws Exception {
-        when(userService.save(any(UserDto.class)))
-                .thenThrow(EmailException.class);
-        mvc.perform(post("/users")
-                        .content(mapper.writeValueAsString(userDto))
-                        .contentType(APPLICATION_JSON)
-                        .characterEncoding(UTF_8)
-                        .accept(APPLICATION_JSON)
-                )
-                .andExpect(status().isConflict());
-    }
-
-    @Test
-    void getUserNotFoundExceptionTest() throws Exception {
-        when(userService.get(any()))
-                .thenThrow(NotFoundException.class);
-        mvc.perform(get("/users/{userId}", 7)
-                )
-                .andExpect(status().isNotFound());
+        mvc.perform(get("/users")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", is(userDtoUpdated.getId()), Integer.class))
+                .andExpect(jsonPath("$[0].name", is(userDtoUpdated.getName())))
+                .andExpect(jsonPath("$[0].email", is(userDtoUpdated.getEmail())));
     }
 }
