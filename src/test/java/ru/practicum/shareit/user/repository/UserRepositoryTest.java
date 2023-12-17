@@ -39,6 +39,7 @@ public class UserRepositoryTest {
                 .email(user.getEmail())
                 .build();
     }
+
     @Autowired
     private UserRepository userRepository;
 
