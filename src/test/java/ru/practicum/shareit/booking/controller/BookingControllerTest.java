@@ -165,6 +165,7 @@ class BookingControllerTest {
                 .andExpect(jsonPath("$.item", notNullValue()))
                 .andExpect(status().isOk());
     }
+
     @Test
     void getAllBookingsValidationExceptionTest() throws Exception {
         when(bookingService.getAllBookings(anyInt(), anyString(), anyInt(), anyInt()))

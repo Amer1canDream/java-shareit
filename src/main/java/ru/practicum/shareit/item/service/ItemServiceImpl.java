@@ -19,7 +19,6 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.service.UserService;
@@ -34,7 +33,6 @@ import java.util.stream.Stream;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Collections.emptyList;
-import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static ru.practicum.shareit.booking.model.BookingTimeState.PAST;
 import static ru.practicum.shareit.item.mapper.CommentMapper.mapToComment;
