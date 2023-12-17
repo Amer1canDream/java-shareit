@@ -184,10 +184,6 @@ public class BookingServiceImpl implements BookingService {
         else
             throw new ValidationException("Unknown state: " + state);
     }
-    /**
-    Было два метода, один метод лишний с тем замечанием, что вы указали. В текущем методе такая проверка не нужна.
-     И это 14 ТЗ еще, хотя я наперед добавил сюда фич из 15.
-     */
 
     @Override
     public List<BookingAllFieldsDto> getBookingsByOwnerId(Integer userId, String state, Integer from, Integer size) {

@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.dto.BookingAllFieldsDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.service.BookingService;
@@ -17,6 +16,10 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.mapper.ItemRequestMapper;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.service.UserService;
@@ -54,10 +57,13 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemDto save(ItemDto itemDto, Integer userId) {
+    public ItemDto save(ItemDto itemDto, ItemRequestDto itemRequestDto, Integer userId) {
         validateItem(itemDto);
         var user = toUser(userService.get(userId));
         var item = mapToItem(itemDto);
+        if (itemDto.getRequestId() != null)
+            item.setRequest(ItemRequestMapper.mapToItemRequest(
+                    itemRequestDto, userService.get(itemRequestDto.getRequesterId())));
         item.setOwner(user);
         var save = itemRepository.save(item);
         return mapToItemDto(save);
@@ -178,24 +184,20 @@ public class ItemServiceImpl implements ItemService {
                 new EntityNotFoundException(String.format("Вещь с id = %s не найдена!", itemId)));
     }
 
-    private BookingAllFieldsDto getNextItem(List<BookingAllFieldsDto> bookings) {
-        if (bookings != null)
-            return bookings.stream()
-                    .filter(booking -> booking.getStart().isAfter(now()))
-                    .min(comparing(BookingAllFieldsDto::getEnd))
-                    .orElse(null);
-        else
-            return null;
+    @Override
+    public List<ItemDto> getItemsByRequestId(Integer requestId) {
+        return itemRepository.findAllByRequest_IdIs(requestId)
+                .stream()
+                .map(ItemMapper::mapToItemDto)
+                .collect(toList());
     }
 
-    private BookingAllFieldsDto getLastItem(List<BookingAllFieldsDto> bookings) {
-        if (bookings != null)
-            return bookings.stream()
-                    .filter(booking -> booking.getEnd().isBefore(now()))
-                    .max(comparing(BookingAllFieldsDto::getEnd))
-                    .orElse(null);
-        else
-            return null;
+    @Override
+    public List<ItemDto> getItemsByRequests(List<ItemRequest> requests) {
+        return itemRepository.findAllByRequestIn(requests)
+                .stream()
+                .map(ItemMapper::mapToItemDto)
+                .collect(toList());
     }
 
     private void validateItem(ItemDto item) {
