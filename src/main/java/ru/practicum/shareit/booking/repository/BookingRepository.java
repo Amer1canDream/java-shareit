@@ -44,9 +44,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
                                                                        BookingStatus bookingState,
                                                                        Pageable pageable);
 
-    List<Booking> findBookingsByItem_IdAndItem_Owner_IdIsOrderByStart(Integer itemId,
-                                                                      Integer userId);
-
     Page<Booking> findBookingsByItemOwnerIsOrderByStartDesc(User owner,
                                                             Pageable pageable);
 
@@ -76,10 +73,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
                                                                      LocalDateTime localDateTime,
                                                                      Pageable pageable);
 
-    List<Booking> findBookingsByItem_IdIsAndStatusIsAndEndIsAfter(Integer itemId,
-                                                                  BookingStatus bookingStatus,
-                                                                  LocalDateTime localDateTime);
-
     List<Booking> findBookingsByBookerIsAndStatusIsOrderByStartDesc(User booker,
                                                                     BookingStatus bookingState);
 
@@ -91,24 +84,6 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
                                                          Pageable pageable);
 
     List<Booking> findBookingsByBookerIsOrderByStartDesc(User booker);
-
-    @Query("SELECT b FROM Booking b JOIN b.item i ON b.item = i WHERE i.owner.id = :ownerId ORDER BY b.start DESC")
-    List<Booking> getOwnerAll(Integer ownerId, Pageable pageable);
-
-    @Query("SELECT b FROM Booking b JOIN b.item i ON b.item = i WHERE  i.owner.id = :userId AND b.start > :currentTime " +
-            "ORDER BY b.start DESC")
-    List<Booking> getOwnerFuture(@Param("userId") int userId, @Param("currentTime") LocalDateTime currentTime, Pageable pageable);
-
-    @Query("SELECT b FROM Booking b JOIN b.item i ON b.item = i WHERE i.owner.id = :userId " +
-            "AND b.start <= :currentTime AND b.end >= :currentTime ORDER BY b.start DESC ")
-    List<Booking> getOwnerCurrent(@Param("userId") int userId, @Param("currentTime") LocalDateTime currentTime, Pageable pageable);
-
-    List<Booking> getAllByItemOwnerIdAndStatus(Integer ownerId, BookingStatus status, Pageable pageable);
-
-    @Query("SELECT b FROM Booking b JOIN b.item i ON b.item = i WHERE i.owner.id = :userId AND b.end < :currentTime")
-    List<Booking> getOwnerPast(@Param("userId") int userId, @Param("currentTime") LocalDateTime currentTime, Pageable pageable);
-
-    List<Booking> getAllByItemOwnerIdOrderByStartDesc(Integer userId);
 
     Booking getFirstByItemIdAndEndBeforeOrderByEndDesc(Integer itemId, LocalDateTime end);
 

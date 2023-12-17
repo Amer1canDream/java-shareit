@@ -261,24 +261,4 @@ public class BookingServiceImpl implements BookingService {
         if (bookingSavingDto.getStart().equals(bookingSavingDto.getEnd()))
             throw new ValidationException("Start and end date the same");
     }
-
-    private void validateListOfBookings(List<Booking> bookingList) {
-        if (bookingList.isEmpty()) {
-            throw new NotFoundException("There are not bookings for that user");
-        }
-    }
-
-    private static BookingTimeState getState(String stateStr) {
-        BookingTimeState state;
-        if (stateStr == null) {
-            state = BookingTimeState.ALL;
-        } else {
-            try {
-                state = BookingTimeState.valueOf(stateStr);
-            } catch (Exception e) {
-                throw new ValidationException(String.format("Unknown state: %s", stateStr));
-            }
-        }
-        return state;
-    }
 }
