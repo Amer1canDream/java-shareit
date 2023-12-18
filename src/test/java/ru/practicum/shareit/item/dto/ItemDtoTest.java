@@ -123,4 +123,10 @@ class ItemDtoTest {
                 .extractingJsonPathNumberValue("$.id")
                 .isEqualTo(commentDto.getId().intValue());
     }
+
+    @Test
+    void itemDtoWithBookingTest() {
+        var itemDtoWithBooking = new ItemDtoWithBooking();
+        assertThat(itemDtoWithBooking.getDescription() == null);
+    }
 }

@@ -45,7 +45,7 @@ class ItemRequestControllerTest {
             .build();
 
     @Test
-    void createItemRequest() throws Exception {
+    void createItemRequestTest() throws Exception {
         when(itemRequestService.save(any(), anyInt()))
                 .thenReturn(itemRequestDto);
         mvc.perform(post("/requests")
@@ -64,7 +64,7 @@ class ItemRequestControllerTest {
     }
 
     @Test
-    void getAllByOwner() throws Exception {
+    void getAllByOwnerTest() throws Exception {
         when(itemRequestService.getAllItemRequests(anyInt()))
                 .thenReturn(List.of(itemRequestDto));
 
@@ -75,7 +75,7 @@ class ItemRequestControllerTest {
     }
 
     @Test
-    void getAllItemRequests() throws Exception {
+    void getAllItemRequestsTest() throws Exception {
         when(itemRequestService.getAllItemRequests(anyInt(), anyInt(), anyInt()))
                 .thenReturn(List.of(itemRequestDto));
         mvc.perform(get("/requests/all")
@@ -93,7 +93,7 @@ class ItemRequestControllerTest {
     }
 
     @Test
-    void getAllItemRequestsById() throws Exception {
+    void getAllItemRequestsByIdTest() throws Exception {
         when(itemRequestService.getAllItemRequests(anyInt()))
                 .thenReturn(List.of(itemRequestDto));
         mvc.perform(get("/requests")
@@ -108,7 +108,7 @@ class ItemRequestControllerTest {
     }
 
     @Test
-    void getItemRequestById() throws Exception {
+    void getItemRequestByIdTest() throws Exception {
         when(itemRequestService.getItemRequestById(anyInt(), anyInt()))
                 .thenReturn(itemRequestDto);
         mvc.perform(get("/requests/{requestId}", 1)
@@ -123,7 +123,7 @@ class ItemRequestControllerTest {
     }
 
     @Test
-    void getItemRequestsWithNotFoundException() throws Exception {
+    void getItemRequestsWithNotFoundExceptionTest() throws Exception {
         when(itemRequestService.getAllItemRequests(anyInt()))
                 .thenThrow(NotFoundException.class);
 
@@ -133,7 +133,7 @@ class ItemRequestControllerTest {
     }
 
     @Test
-    void getById() throws Exception {
+    void getByIdTest() throws Exception {
         when(itemRequestService.getItemRequestById(anyInt(), anyInt()))
                 .thenReturn(itemRequestDto);
 

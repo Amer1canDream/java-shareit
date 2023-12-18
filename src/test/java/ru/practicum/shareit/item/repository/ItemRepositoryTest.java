@@ -59,21 +59,21 @@ class ItemRepositoryTest {
     }
 
     @Test
-    void shouldReturnAllItems() {
+    void shouldReturnAllItemsTest() {
         var items = itemRepository.search("pen");
         assertThat(items, containsInAnyOrder(item1, item2, item3));
         assertThat(items, hasSize(3));
     }
 
     @Test
-    void shouldReturnTwoItems() {
+    void shouldReturnTwoItemsTest() {
         var items = itemRepository.search("black pen");
         assertThat(items, containsInAnyOrder(item1, item3));
         assertThat(items, hasSize(2));
     }
 
     @Test
-    void shouldReturnNoItems() {
+    void shouldReturnNoItemsTest() {
         var items = itemRepository.search("brick");
         assertThat(items, empty());
     }

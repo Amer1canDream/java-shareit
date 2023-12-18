@@ -72,7 +72,7 @@ class UserControllerTest {
     }
 
     @Test
-    void create() throws Exception {
+    void createTest() throws Exception {
         when(mockUserService.save(userDtoCreateTest))
                 .thenReturn(userDtoCreated);
 
@@ -88,7 +88,7 @@ class UserControllerTest {
     }
 
     @Test
-    void update() throws Exception {
+    void updateTest() throws Exception {
         when(mockUserService.update(userDtoUpdateTest, 1))
                 .thenReturn(userDtoUpdated);
 
@@ -104,7 +104,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getUserDto() throws Exception {
+    void getUserDtoTest() throws Exception {
         when(mockUserService.get(1))
                 .thenReturn(userDtoUpdated);
 
@@ -117,7 +117,7 @@ class UserControllerTest {
     }
 
     @Test
-    void deleteUserDto() throws Exception {
+    void deleteUserDtoTest() throws Exception {
         mvc.perform(delete("/users/1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -125,7 +125,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getAll() throws Exception {
+    void getAllTest() throws Exception {
         when(mockUserService.getUsers())
                 .thenReturn(List.of(userDtoUpdated));
 
@@ -138,7 +138,7 @@ class UserControllerTest {
     }
 
     @Test
-    void deleteById() throws Exception {
+    void deleteByIdTest() throws Exception {
         doNothing().when(mockUserService).delete(anyInt());
 
         mvc.perform(delete("/users/1"))
@@ -148,7 +148,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getById() throws Exception {
+    void getByIdTest() throws Exception {
         when(mockUserService.getUsers())
                 .thenReturn(List.of(userDtoUpdated));
 

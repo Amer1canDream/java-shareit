@@ -70,7 +70,7 @@ class BookingControllerTest {
 
 
     @Test
-    void getBookings() throws Exception {
+    void getBookingsTest() throws Exception {
         when(bookingService.getAllBookings(anyInt(), anyString(), anyInt(), anyInt()))
                 .thenReturn(of(bookingAllFieldsDto));
         mvc.perform(get("/bookings")
@@ -90,7 +90,7 @@ class BookingControllerTest {
     }
 
     @Test
-    void getBookingsByOwner() throws Exception {
+    void getBookingsByOwnerTest() throws Exception {
         when(bookingService.getBookingsByOwnerId(anyInt(), anyString(), anyInt(), anyInt()))
                 .thenReturn(of(bookingAllFieldsDto));
         mvc.perform(get("/bookings/owner")
@@ -110,7 +110,7 @@ class BookingControllerTest {
     }
 
     @Test
-    void save() throws Exception {
+    void saveTest() throws Exception {
         when(bookingService.save(any(), any(), anyInt()))
                 .thenReturn(bookingAllFieldsDto);
         mvc.perform(post("/bookings")
@@ -131,7 +131,7 @@ class BookingControllerTest {
     }
 
     @Test
-    void approve() throws Exception {
+    void approveTest() throws Exception {
         when(bookingService.approve(anyInt(), anyBoolean(), anyInt()))
                 .thenReturn(bookingAllFieldsDto);
         mvc.perform(patch("/bookings/{bookingId}", 1)
@@ -152,7 +152,7 @@ class BookingControllerTest {
     }
 
     @Test
-    void getBookingById() throws Exception {
+    void getBookingByIdTest() throws Exception {
         when(bookingService.getBookingById(anyInt(), anyInt()))
                 .thenReturn(bookingAllFieldsDto);
         mvc.perform(get("/bookings/{bookingId}", 1)

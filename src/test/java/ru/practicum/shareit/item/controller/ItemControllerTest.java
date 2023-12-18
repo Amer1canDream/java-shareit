@@ -182,7 +182,7 @@ class ItemControllerTest {
     }
 
     @Test
-    void searchItemsByTextIsBlank() throws Exception {
+    void searchItemsByTextIsBlankTest() throws Exception {
         when(itemService.search(anyString(), anyInt(), anyInt(), anyInt()))
                 .thenReturn(of(itemDto));
 
@@ -245,7 +245,7 @@ class ItemControllerTest {
     }
 
     @Test
-    void findById() throws Exception {
+    void findByIdTest() throws Exception {
         ItemAllFieldsDto itemResponseDto = new ItemAllFieldsDto();
         when(itemService.get(anyInt(),anyInt()))
                 .thenReturn(itemResponseDto);
@@ -261,7 +261,7 @@ class ItemControllerTest {
     }
 
     @Test
-    void getAll() throws Exception {
+    void getAllTest() throws Exception {
         ItemDtoWithBooking itemAllFieldsDto1 = new ItemDtoWithBooking();
         ItemDtoWithBooking itemAllFieldsDto2 = new ItemDtoWithBooking();
         List<ItemDtoWithBooking> items = List.of(itemAllFieldsDto1, itemAllFieldsDto2);
@@ -274,7 +274,7 @@ class ItemControllerTest {
     }
 
     @Test
-    void addComment() throws Exception {
+    void addCommentTest() throws Exception {
         CommentDto commentDto = new CommentDto(1, "text comment", 1,
                 "test", LocalDateTime.now());
         when(itemService.saveComment(any(), anyInt(), anyInt()))

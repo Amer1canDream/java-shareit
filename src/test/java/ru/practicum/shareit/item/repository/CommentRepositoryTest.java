@@ -69,7 +69,7 @@ class CommentRepositoryTest {
     }
 
     @Test
-    void findAllByItemId() {
+    void findAllByItemIdTest() {
         List<Comment> actualComments = commentRepository.findById(item2.getId()).stream().collect(Collectors.toList());
 
         assertThat(0, equalTo(actualComments.size()));

@@ -32,7 +32,7 @@ class BookingMapperTest {
     }
 
     @Test
-    void toBookingItemDto() {
+    void toBookingItemDtoTest() {
         BookingAllFieldsDto bookingDto = BookingMapper.mapToBookingAllFieldsDto(booking);
         assertNotNull(bookingDto);
         assertEquals(BookingAllFieldsDto.class, bookingDto.getClass());
@@ -41,7 +41,7 @@ class BookingMapperTest {
     }
 
     @Test
-    void toBooking() {
+    void toBookingTest() {
         BookingSavingDto bookingDto = new BookingSavingDto(item.getId(),
                 LocalDateTime.of(2022, 9, 16, 13, 22, 22),
                 LocalDateTime.of(2022, 9, 17, 13, 22, 22),

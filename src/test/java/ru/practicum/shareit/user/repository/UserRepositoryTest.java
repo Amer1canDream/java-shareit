@@ -47,12 +47,12 @@ public class UserRepositoryTest {
     private TestEntityManager entityManager;
 
     @Test
-    void load() {
+    void loadTest() {
         Assertions.assertNotNull(entityManager);
     }
 
     @Test
-    void existsById_shouldInvokeRepositoryAndReturnTheSame() {
+    void existsById_shouldInvokeRepositoryAndReturnTheSameTest() {
         User savedUser = userRepository.save(user);
         assertThat(userRepository.existsById(savedUser.getId())).isTrue();
     }

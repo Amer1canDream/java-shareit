@@ -7,25 +7,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ExceptionsTest {
 
     @Test
-    void notFoundException() {
+    void notFoundExceptionTest() {
         Exception exception = new NotFoundException("Test");
         assertThat(exception.getMessage()).isEqualTo("Test");
     }
 
     @Test
-    void conflictException() {
+    void conflictExceptionTest() {
         Exception exception = new ConflictException("Test");
         assertThat(exception.getMessage()).isEqualTo("Test");
     }
 
     @Test
-    void emailException() {
+    void emailExceptionTest() {
         Exception exception = new EmailException("Test");
         assertThat(exception.getMessage()).isEqualTo("Test");
     }
 
     @Test
-    void validatationException() {
+    void validatationExceptionTest() {
         Exception exception = new ValidationException("Test");
         assertThat(exception.getMessage()).isEqualTo("Test");
     }

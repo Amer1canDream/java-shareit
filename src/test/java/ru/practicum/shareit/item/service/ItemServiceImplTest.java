@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.service;
 
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +21,9 @@ import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -313,6 +317,13 @@ class ItemServiceImplTest {
         assertThat(comment.getText(), equalTo(commentDto.getText()));
         assertThat(comment.getId(), equalTo(commentDto.getId()));
         assertThat(comment.getId(), notNullValue());
+    }
+
+    @Test
+    void getItemByRequestTest() {
+        List<ItemRequest> items = new ArrayList<>();
+        List<ItemDto> itemRequest = itemService.getItemsByRequests(items);
+        assertThat(itemRequest.size(), equalTo(0));
     }
 
     @Test

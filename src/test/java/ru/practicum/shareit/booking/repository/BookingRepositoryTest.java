@@ -45,7 +45,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findAllByBookerId() {
+    void findAllByBookerIdTest() {
         List<Booking> bookings = bookingRepository
                 .findBookingsByBookerIsOrderByStartDesc(user, PageRequest.ofSize(10)).getContent();
         assertNotNull(bookings);
@@ -56,7 +56,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findAllByItemsOwnerId() {
+    void findAllByItemsOwnerIdTest() {
         List<Booking> bookings = bookingRepository.findBookingsByItemOwnerIsOrderByStartDesc(user);
         assertNotNull(bookings);
         assertEquals(1, bookings.size());
@@ -66,7 +66,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findAllCurrentByItemsOwnerId() {
+    void findAllCurrentByItemsOwnerIdTest() {
         LocalDateTime now = LocalDateTime.of(2022, 10, 15, 20, 22, 22);
         List<Booking> bookings = bookingRepository.findBookingsByBookerIsAndStartBeforeAndEndAfterOrderByStartDesc(user, now, now,
                 PageRequest.ofSize(10)).getContent();
@@ -78,7 +78,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findAllPastByItemsOwnerId() {
+    void findAllPastByItemsOwnerIdTest() {
         LocalDateTime now = LocalDateTime.of(2022, 10, 17, 20, 22, 22);
         List<Booking> bookings = bookingRepository.findBookingsByBookerIsAndEndBeforeOrderByStartDesc(user, now,
                 PageRequest.ofSize(10)).getContent();
@@ -90,7 +90,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findAllFutureByItemsOwnerId() {
+    void findAllFutureByItemsOwnerIdTest() {
         LocalDateTime now = LocalDateTime.of(2022, 10, 14, 20, 22, 22);
         List<Booking> bookings = bookingRepository.findBookingsByBookerIsAndStartIsAfterOrderByStartDesc(user, now,
                 PageRequest.ofSize(10)).getContent();
@@ -102,7 +102,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findAllStatusByItemsOwnerId() {
+    void findAllStatusByItemsOwnerIdTest() {
         booking.setStatus(BookingStatus.WAITING);
         bookingRepository.save(booking);
         List<Booking> bookings = bookingRepository.findBookingsByItemOwnerIsAndStatusIsOrderByStartDesc(user, BookingStatus.WAITING);
@@ -115,7 +115,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findLastBookingByItemId() {
+    void findLastBookingByItemIdTest() {
         LocalDateTime now = LocalDateTime.of(2022, 10, 17, 20, 22, 22);
         List<Booking> bookings = bookingRepository.findLastBookingByItemId(item.getId(), user.getId(), now);
         assertNotNull(bookings);
@@ -126,7 +126,7 @@ class BookingRepositoryTest {
     }
 
     @Test
-    void findNextBookingByItemId() {
+    void findNextBookingByItemIdTest() {
         LocalDateTime now = LocalDateTime.of(2022, 10, 13, 20, 22, 22);
         List<Booking> bookings = bookingRepository.findNextBookingByItemId(item.getId(), user.getId(), now);
         assertNotNull(bookings);

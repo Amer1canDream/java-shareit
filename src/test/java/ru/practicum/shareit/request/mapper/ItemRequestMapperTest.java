@@ -39,7 +39,7 @@ public class ItemRequestMapperTest {
     }
 
     @Test
-    void mapToItemRequest() throws IOException {
+    void mapToItemRequestTest() throws IOException {
         var itemRequestDto = new ItemRequestDto(
                 1,
                 "Red carpet",
@@ -52,7 +52,7 @@ public class ItemRequestMapperTest {
     }
 
     @Test
-    void mapToItemRequestDto() throws IOException {
+    void mapToItemRequestDtoTest() throws IOException {
 
         var itemRequestDto = new ItemRequestDto(
                 1,

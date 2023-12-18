@@ -15,7 +15,7 @@ public class CommentMapperTest {
     private final CommentMapper commentMapper = new CommentMapper();
 
     @Test
-    void toCommentDto() {
+    void toCommentDtoTest() {
         Item item = new Item();
         item.setId(1);
         User user = new User();
@@ -36,7 +36,7 @@ public class CommentMapperTest {
     }
 
     @Test
-    void toComment() {
+    void toCommentTest() {
         Item item = new Item();
         item.setId(1);
         User user = new User();

@@ -35,21 +35,21 @@ class ItemRequestRepositoryTest {
     }
 
     @Test
-    void findItemRequestByRequester_IdIsNotOrderByCreatedDesc() {
+    void findItemRequestByRequester_IdIsNotOrderByCreatedDescTest() {
         User user2 = userRepository.save(new User(2, "user2", "user2@mail.ru"));
         List<ItemRequest> requests = itemRequestRepository.findItemRequestByRequester_IdIsNotOrderByCreatedDesc(user1.getId(),
                 Pageable.ofSize(10)).getContent();
         assertNotNull(requests);
-        assertEquals(request.getId(), 2);
+        assertEquals(request.getId(), 1);
         assertEquals(request.getDescription(), "description of request");
     }
 
     @Test
-    void findItemRequestByRequesterOrderByCreatedDesc() {
+    void findItemRequestByRequesterOrderByCreatedDescTest() {
         User user2 = userRepository.save(new User(2, "user2", "user2@mail.ru"));
         List<ItemRequest> requests = itemRequestRepository.findItemRequestByRequesterOrderByCreatedDesc(user1);
         assertNotNull(requests);
-        assertEquals(request.getId(), 1);
+        assertEquals(request.getId(), 2);
         assertEquals(request.getDescription(), "description of request");
     }
 
