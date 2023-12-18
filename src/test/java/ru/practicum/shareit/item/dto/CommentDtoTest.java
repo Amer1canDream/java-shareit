@@ -1,11 +1,8 @@
-package ru.practicum.shareit.item;
-
-import ru.practicum.shareit.item.dto.CommentDto;
+package ru.practicum.shareit.item.dto;
 
 import java.time.LocalDateTime;
 
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.json.JacksonTester;
