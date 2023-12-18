@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,6 +45,12 @@ class UserServiceImplTest {
     void nullTest() {
         var dto = userService.save(saveUserDto("Jack", "jack@mail.com"));
         assertNotEquals(null, dto);
+    }
+
+    @Test
+    void getUsersTest() {
+        List<UserDto> users = userService.getUsers();
+        assertThat(users.size(), equalTo(0));
     }
 
     @Test
