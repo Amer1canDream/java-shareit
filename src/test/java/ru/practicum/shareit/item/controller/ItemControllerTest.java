@@ -1,7 +1,9 @@
 package ru.practicum.shareit.item.controller;
 
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import ru.practicum.shareit.item.ItemController;
+import ru.practicum.shareit.item.dto.ItemDtoWithBooking;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -15,6 +17,12 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -176,6 +184,17 @@ class ItemControllerTest {
     }
 
     @Test
+    void searchItemsByTextIsBlank() throws Exception {
+        when(itemService.search(anyString(), anyInt(), anyInt(), anyInt()))
+                .thenReturn(of(itemDto));
+
+        mvc.perform(get("/items/search")
+                        .param("text", ""))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
     void saveValidationExceptionTest() throws Exception {
         when(itemService.save(any(), any(), anyInt()))
                 .thenThrow(ValidationException.class);
@@ -225,5 +244,53 @@ class ItemControllerTest {
                         .accept(APPLICATION_JSON)
                 )
                 .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    void findById() throws Exception {
+        ItemAllFieldsDto itemResponseDto = new ItemAllFieldsDto();
+        when(itemService.get(anyInt(),anyInt()))
+                .thenReturn(itemResponseDto);
+
+        mvc.perform(get("/items/1")
+                        .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(itemResponseDto.getId()), Integer.class))
+                .andExpect(jsonPath("$.name", is(itemResponseDto.getName())))
+                .andExpect(jsonPath("$.description", is(itemResponseDto.getDescription())))
+                .andExpect(jsonPath("$.available", is(itemResponseDto.getAvailable())));
+
+    }
+
+    @Test
+    void getAll() throws Exception {
+        ItemDtoWithBooking itemAllFieldsDto1 = new ItemDtoWithBooking();
+        ItemDtoWithBooking itemAllFieldsDto2 = new ItemDtoWithBooking();
+        List<ItemDtoWithBooking> items = List.of(itemAllFieldsDto1, itemAllFieldsDto2);
+        when(itemService.getAllItems(anyInt(),anyInt(),anyInt()))
+                .thenReturn(items);
+
+        mvc.perform(get("/items")
+                        .header("X-Sharer-User-Id", 0))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void addComment() throws Exception {
+        CommentDto commentDto = new CommentDto(1, "text comment", 1,
+                "test", LocalDateTime.now());
+        when(itemService.saveComment(any(), anyInt(), anyInt()))
+                .thenReturn(commentDto);
+
+        mvc.perform(post("/items/1/comment")
+                        .header("X-Sharer-User-Id", 1)
+                        .content(mapper.writeValueAsString(commentDto))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(commentDto.getId()), Integer.class))
+                .andExpect(jsonPath("$.text", is(commentDto.getText())))
+                .andExpect(jsonPath("$.authorName", is(commentDto.getAuthorName())));
     }
 }

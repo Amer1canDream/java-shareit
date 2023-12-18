@@ -14,8 +14,6 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.http.MediaType.*;
@@ -25,6 +23,7 @@ import static java.time.LocalDateTime.of;
 import static java.time.Month.DECEMBER;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = ItemRequestController.class)
 class ItemRequestControllerTest {
@@ -62,6 +61,17 @@ class ItemRequestControllerTest {
                 .andExpect(jsonPath("$.id", is(itemRequestDto.getId()), Integer.class))
                 .andExpect(jsonPath("$.items", nullValue()))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllByOwner() throws Exception {
+        when(itemRequestService.getAllItemRequests(anyInt()))
+                .thenReturn(List.of(itemRequestDto));
+
+        mvc.perform(get("/requests")
+                        .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(List.of(itemRequestDto))));
     }
 
     @Test
@@ -120,5 +130,18 @@ class ItemRequestControllerTest {
         mvc.perform(get("/requests")
                         .header(headerSharerUserId, 1))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getById() throws Exception {
+        when(itemRequestService.getItemRequestById(anyInt(), anyInt()))
+                .thenReturn(itemRequestDto);
+
+        mvc.perform(get("/requests/888")
+                        .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(itemRequestDto.getId()), Integer.class))
+                .andExpect(jsonPath("$.description", is(itemRequestDto.getDescription()), String.class))
+                .andExpect(jsonPath("$.created", is(itemRequestDto.getCreated().toString()), String.class));
     }
 }

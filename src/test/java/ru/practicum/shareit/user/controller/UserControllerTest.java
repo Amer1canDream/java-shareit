@@ -16,12 +16,11 @@ import ru.practicum.shareit.user.service.UserService;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = UserController.class)
 class UserControllerTest {
@@ -136,5 +135,25 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[0].id", is(userDtoUpdated.getId()), Integer.class))
                 .andExpect(jsonPath("$[0].name", is(userDtoUpdated.getName())))
                 .andExpect(jsonPath("$[0].email", is(userDtoUpdated.getEmail())));
+    }
+
+    @Test
+    void deleteById() throws Exception {
+        doNothing().when(mockUserService).delete(anyInt());
+
+        mvc.perform(delete("/users/1"))
+                .andExpect(status().isOk());
+
+        verify(mockUserService, times(1)).delete(anyInt());
+    }
+
+    @Test
+    void getById() throws Exception {
+        when(mockUserService.getUsers())
+                .thenReturn(List.of(userDtoUpdated));
+
+        mvc.perform(get("/users"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(List.of(userDtoUpdated))));
     }
 }
