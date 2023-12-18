@@ -73,7 +73,6 @@ class CommentRepositoryTest {
         List<Comment> actualComments = commentRepository.findById(item2.getId()).stream().collect(Collectors.toList());
 
         assertThat(0, equalTo(actualComments.size()));
-        assertThat(comment2, equalTo(actualComments.get(0)));
     }
 
 }
