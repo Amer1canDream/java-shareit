@@ -172,16 +172,6 @@ public class ItemServiceImpl implements ItemService {
                 .collect(toList());
     }
 
-    private User checkUser(Integer userId) {
-        return userRepository.findById(userId).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Пользователь с id = %d не найден!", userId)));
-    }
-
-    private Item checkItem(Integer itemId) {
-        return itemRepository.findById(itemId).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Вещь с id = %s не найдена!", itemId)));
-    }
-
     @Override
     public List<ItemDto> getItemsByRequestId(Integer requestId) {
         return itemRepository.findAllByRequest_IdIs(requestId)

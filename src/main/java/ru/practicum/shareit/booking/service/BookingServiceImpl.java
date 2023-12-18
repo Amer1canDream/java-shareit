@@ -53,6 +53,7 @@ public class BookingServiceImpl implements BookingService {
         validate(bookingSavingDto);
         var booker = toUser(userService.get(bookerId));
         var item = mapToItem(itemDto);
+
         var booking = mapToBooking(bookingSavingDto);
         booking.setStatus(BookingStatus.WAITING);
         booking.setBooker(booker);

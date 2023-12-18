@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
+import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.practicum.shareit.booking.dto.BookingAllFieldsDto;
@@ -40,7 +41,7 @@ class BookingServiceImplTest {
     void initialize() {
         owner = userService.save(
                 new UserDto(
-                        null,
+                        1,
                         "Lora",
                         "lora@mail.com")
         );
@@ -146,7 +147,6 @@ class BookingServiceImplTest {
                 equalTo(0));
     }
 
-
     @Test
     void getAllBookingsEmptyListTest() {
         var allBookings = bookingService.getAllBookings(
@@ -154,6 +154,25 @@ class BookingServiceImplTest {
                 APPROVED.name(),
                 null,
                 null);
+        var approved = entityManager.createQuery(
+                        "SELECT booking " +
+                                "FROM Booking booking " +
+                                "WHERE booking.booker.id = :id AND booking.status = :status",
+                        Booking.class)
+                .setParameter("id", bookingAllFieldsDto.getBooker().getId())
+                .setParameter("status", APPROVED)
+                .getResultList();
+        assertThat(allBookings.size(),
+                equalTo(approved.size()));
+        assertThat(allBookings.size(),
+                equalTo(0));
+    }
+
+    @Test
+    void getAllBookingsListTest() {
+        var allBookings = bookingService.getAllBookings(
+                bookingAllFieldsDto.getBooker().getId(),
+                APPROVED.name());
         var approved = entityManager.createQuery(
                         "SELECT booking " +
                                 "FROM Booking booking " +
