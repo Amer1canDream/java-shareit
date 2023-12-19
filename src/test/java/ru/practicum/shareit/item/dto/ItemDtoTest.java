@@ -53,15 +53,16 @@ class ItemDtoTest {
 
     @Test
     void itemAllFieldsDtoTest() throws Exception {
+
         var itemAllFieldsDto = new ItemAllFieldsDto(
                 1,
                 "Pen",
                 "Blue pen",
                 true,
                 1,
-                null,
+                1,
                 new BookingDto(1, 1),
-                null,
+                new BookingDto(12, 12),
                 of()
         );
         var jsonContent = itemAllFieldsDtoJacksonTester.write(itemAllFieldsDto);
@@ -94,10 +95,10 @@ class ItemDtoTest {
                 .isNotNull();
         assertThat(jsonContent)
                 .extractingJsonPathNumberValue("$.requestId")
-                .isNull();
+                .isNotNull();
         assertThat(jsonContent)
                 .extractingJsonPathValue("$.nextBooking")
-                .isNull();
+                .isNotNull();
     }
 
     @Test

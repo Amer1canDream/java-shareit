@@ -178,7 +178,7 @@ public class ItemServiceImpl implements ItemService {
                 .collect(toList());
     }
 
-    private void validateItem(ItemDto item) {
+    void validateItem(ItemDto item) {
         if (item.getName() == null || item.getName().isBlank())
             throw new ValidationException("Name cannot be blank");
         if (item.getDescription() == null || item.getDescription().isBlank())

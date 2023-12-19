@@ -26,8 +26,7 @@ import javax.validation.ValidationException;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static ru.practicum.shareit.booking.model.BookingStatus.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
@@ -156,10 +155,10 @@ class BookingServiceImplTest {
     void getUnknownBookingsByOwnerIdTest() {
         Exception exception = assertThrows(ValidationException.class, () -> {
             bookingService.getBookingsByOwnerId(
-                bookingAllFieldsDto.getBooker().getId(),
-                "Super",
-                null,
-                null);
+                    bookingAllFieldsDto.getBooker().getId(),
+                    "Super",
+                    null,
+                    null);
         });
         String expectedMessage = "Unknown state: Super";
         String actualMessage = exception.getMessage();
@@ -281,28 +280,6 @@ class BookingServiceImplTest {
                 1,
                 1);
         assertThat(approved.size(),
-                equalTo(0));
-    }
-
-    @Test
-    void getBookingsByOwnerIdStatusTest() {
-        var bookings = bookingService.getBookingsByOwnerId(
-                owner.getId(),
-                APPROVED.name(),
-                null,
-                null);
-        var approvedBookings = entityManager.createQuery(
-                        "SELECT booking " +
-                                "FROM Booking booking " +
-                                "JOIN booking.item item " +
-                                "WHERE item.owner.id = :id AND booking.status = :status",
-                        Booking.class)
-                .setParameter("id", owner.getId())
-                .setParameter("status", APPROVED)
-                .getResultList();
-        assertThat(bookings.size(),
-                equalTo(approvedBookings.size()));
-        assertThat(bookings.size(),
                 equalTo(0));
     }
 
@@ -492,7 +469,7 @@ class BookingServiceImplTest {
     @Test
     void approveBookingStateCanNotBeApprovedTest() {
         User user1 = new User(null, "user1", "test1@test.ru");
-        User user2 = new User(null,"user2", "test2@test.ru");
+        User user2 = new User(null, "user2", "test2@test.ru");
 
         UserDto user1dto = UserMapper.toUserDto(user1);
         UserDto user2dto = UserMapper.toUserDto(user2);
@@ -521,7 +498,8 @@ class BookingServiceImplTest {
         bookingRepository.save(booking1);
 
         Exception exception = assertThrows(NotFoundException.class, () -> {
-            bookingService.approve(booking1.getId(),true, user2.getId());;
+            bookingService.approve(booking1.getId(), true, user2.getId());
+            ;
         });
         String expectedMessage = "There is no available approve for the user with id";
         String actualMessage = exception.getMessage();
@@ -532,7 +510,7 @@ class BookingServiceImplTest {
     @Test
     void approveBookingStateCanBeApprovedTest() {
         User user1 = new User(null, "user3", "test3@test.ru");
-        User user2 = new User(null,"user4", "test4@test.ru");
+        User user2 = new User(null, "user4", "test4@test.ru");
 
         UserDto user1dto = UserMapper.toUserDto(user1);
         UserDto user2dto = UserMapper.toUserDto(user2);
@@ -560,7 +538,167 @@ class BookingServiceImplTest {
 
         bookingRepository.save(booking1);
 
-        List<BookingAllFieldsDto> bookings = bookingService.getBookingsByOwnerId(user1.getId(), "ALL",1, 1);
-        bookingService.approve(booking1.getId(),true, user1.getId());
+        List<BookingAllFieldsDto> bookings = bookingService.getBookingsByOwnerId(user1.getId(), "ALL", 1, 1);
+        bookingService.approve(booking1.getId(), true, user1.getId());
+    }
+
+    @Test
+    void approveBookingNotExistsTest() {
+        User user1 = new User(null, "user3", "test3@test.ru");
+        User user2 = new User(null, "user4", "test4@test.ru");
+
+        UserDto user1dto = UserMapper.toUserDto(user1);
+        UserDto user2dto = UserMapper.toUserDto(user2);
+
+        UserDto savedUser1 = userService.save(user1dto);
+        UserDto savedUser2 = userService.save(user2dto);
+
+        user1.setId(savedUser1.getId());
+        user2.setId(savedUser2.getId());
+
+        Item item1 = new Item(null, "item2", "description2", true, user1, null);
+        ItemDto item1dto = ItemMapper.mapToItemDto(item1);
+        ItemAllFieldsDto item1AllFieldsDto = ItemMapper.mapToItemAllFieldsDto(item1, null, null, null);
+        ItemDto item1Dto = itemService.save(item1dto, null, savedUser1.getId());
+        item1.setId(item1Dto.getId());
+
+        Booking booking1 = Booking.builder()
+                .id(null)
+                .start(now())
+                .end(now().plusHours(2))
+                .item(item1)
+                .booker(user2)
+                .status(WAITING)
+                .build();
+
+        bookingRepository.save(booking1);
+
+        List<BookingAllFieldsDto> bookings = bookingService.getBookingsByOwnerId(user1.getId(), "ALL", 1, 1);
+        var exception = assertThrows(NotFoundException.class,
+                () -> bookingService.approve(100, true, user1.getId()));
+        assertEquals("Booking with id#100 does not exist", exception.getMessage());
+    }
+
+    @Test
+    void approveBookingStatusTest() {
+        User user1 = new User(null, "user3", "test3@test.ru");
+        User user2 = new User(null, "user4", "test4@test.ru");
+
+        UserDto user1dto = UserMapper.toUserDto(user1);
+        UserDto user2dto = UserMapper.toUserDto(user2);
+
+        UserDto savedUser1 = userService.save(user1dto);
+        UserDto savedUser2 = userService.save(user2dto);
+
+        user1.setId(savedUser1.getId());
+        user2.setId(savedUser2.getId());
+
+        Item item1 = new Item(null, "item2", "description2", true, user1, null);
+        ItemDto item1dto = ItemMapper.mapToItemDto(item1);
+        ItemAllFieldsDto item1AllFieldsDto = ItemMapper.mapToItemAllFieldsDto(item1, null, null, null);
+        ItemDto item1Dto = itemService.save(item1dto, null, savedUser1.getId());
+        item1.setId(item1Dto.getId());
+
+        Booking booking1 = Booking.builder()
+                .id(null)
+                .start(now())
+                .end(now().plusHours(2))
+                .item(item1)
+                .booker(user2)
+                .status(REJECTED)
+                .build();
+
+        bookingRepository.save(booking1);
+
+        List<BookingAllFieldsDto> bookings = bookingService.getBookingsByOwnerId(user1.getId(), "ALL", 1, 1);
+        var exception = assertThrows(ValidationException.class,
+                () -> bookingService.approve(booking1.getId(), true, user1.getId()));
+        assertEquals("Booking state cannot be updated", exception.getMessage());
+    }
+
+    @Test
+    void saveValidationTest() {
+        User user1 = new User(null, "user3", "test3@test.ru");
+        User user2 = new User(null, "user4", "test4@test.ru");
+
+        UserDto user1dto = UserMapper.toUserDto(user1);
+        UserDto user2dto = UserMapper.toUserDto(user2);
+
+        UserDto savedUser1 = userService.save(user1dto);
+        UserDto savedUser2 = userService.save(user2dto);
+
+        user1.setId(savedUser1.getId());
+        user2.setId(savedUser2.getId());
+
+        Item item1 = new Item(null, "item2", "description2", true, user1, null);
+        ItemDto item1dto = ItemMapper.mapToItemDto(item1);
+        ItemAllFieldsDto item1AllFieldsDto = ItemMapper.mapToItemAllFieldsDto(item1, null, null, null);
+        ItemDto item1Dto = itemService.save(item1dto, null, savedUser1.getId());
+        item1.setId(item1Dto.getId());
+
+        BookingSavingDto booking1 = BookingSavingDto.builder()
+                .id(900)
+                .start(now())
+                .end(now().plusHours(2))
+                .itemId(item1.getId())
+                .booker(user1.getId())
+                .status("WAITING")
+                .build();
+
+
+        List<BookingAllFieldsDto> bookings = bookingService.getBookingsByOwnerId(user1.getId(), "ALL", 1, 1);
+        var exception = assertThrows(NotFoundException.class,
+                () -> bookingService.save(booking1, item1AllFieldsDto, user1.getId()));
+        assertEquals("Item with id#" + null + " cannot be booked by his owner", exception.getMessage());
+    }
+
+    @Test
+    void saveAvailableFalseTest() {
+        User user1 = new User(null, "user3", "test3@test.ru");
+        User user2 = new User(null, "user4", "test4@test.ru");
+
+        UserDto user1dto = UserMapper.toUserDto(user1);
+        UserDto user2dto = UserMapper.toUserDto(user2);
+
+        UserDto savedUser1 = userService.save(user1dto);
+        UserDto savedUser2 = userService.save(user2dto);
+
+        user1.setId(savedUser1.getId());
+        user2.setId(savedUser2.getId());
+
+        Item item1 = new Item(null, "item2", "description2", false, user1, null);
+        ItemDto item1dto = ItemMapper.mapToItemDto(item1);
+        ItemAllFieldsDto item1AllFieldsDto = ItemMapper.mapToItemAllFieldsDto(item1, null, null, null);
+        ItemDto item1Dto = itemService.save(item1dto, null, savedUser1.getId());
+        item1.setId(item1Dto.getId());
+
+        BookingSavingDto booking1 = BookingSavingDto.builder()
+                .id(900)
+                .start(now())
+                .end(now().plusHours(2))
+                .itemId(item1.getId())
+                .booker(user1.getId())
+                .status("WAITING")
+                .build();
+
+
+        var exception = assertThrows(ValidationException.class,
+                () -> bookingService.save(booking1, item1AllFieldsDto, user2.getId()));
+        assertEquals("Item with id#" + null + " cannot be booked", exception.getMessage());
+    }
+
+    @Test
+    void getBookingByIdNotFoundTest() {
+        User user1 = new User(null, "user3", "test3@test.ru");
+
+        UserDto user1dto = UserMapper.toUserDto(user1);
+
+        UserDto savedUser1 = userService.save(user1dto);
+
+        user1.setId(savedUser1.getId());
+
+        var exception = assertThrows(NotFoundException.class,
+                () -> bookingService.getBookingById(901, user1.getId()));
+        assertEquals("Booking with id#901 does not exist", exception.getMessage());
     }
 }

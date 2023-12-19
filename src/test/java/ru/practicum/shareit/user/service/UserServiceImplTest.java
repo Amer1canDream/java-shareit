@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import javax.validation.ValidationException;
 
 import java.util.List;
 
@@ -124,6 +125,30 @@ class UserServiceImplTest {
     }
 
     @Test
+    void updateSameEmailTest() {
+        userService.save(userDto);
+        var user = entityManager.createQuery(
+                        "SELECT user " +
+                                "FROM User user " +
+                                "WHERE user.email = :email",
+                        User.class)
+                .setParameter("email", userDto.getEmail())
+                .getSingleResult();
+        var dto = saveUserDto("Jack", "jack@mail.com");
+        userService.update(dto, user.getId());
+        var updatedUser = entityManager.createQuery(
+                        "SELECT user " +
+                                "FROM User user " +
+                                "WHERE user.id = :id",
+                        User.class)
+                .setParameter("id", user.getId())
+                .getSingleResult();
+        assertThat(updatedUser.getEmail(), equalTo(dto.getEmail()));
+        assertThat(updatedUser.getName(), equalTo(dto.getName()));
+        assertThat(updatedUser.getId(), notNullValue());
+    }
+
+    @Test
     void deleteTest() {
         addUsers();
         var usersBefore = entityManager.createQuery(
@@ -147,5 +172,38 @@ class UserServiceImplTest {
                         "FROM User user",
                 User.class).getResultList();
         assertThat(users.size(), equalTo(3));
+    }
+
+    @Test
+    void validateEmptyEmailTest() {
+        UserDto userDto = new UserDto(1,"user1",null);
+        Exception exception = assertThrows(ValidationException.class, () -> {
+            userService.validate(userDto);;
+        });
+        String expectedMessage = "Email cannot be empty.";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void validateWrongEmailTest() {
+        UserDto userDto = new UserDto(1,"user1","test");
+        Exception exception = assertThrows(ValidationException.class, () -> {
+            userService.validate(userDto);;
+        });
+        String expectedMessage = "Incorrect email: ";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void validatePatchTest() {
+        UserDto userDto = new UserDto(1,"user1","test");
+        Exception exception = assertThrows(ValidationException.class, () -> {
+            userService.validatePatch(userDto);;
+        });
+        String expectedMessage = "Incorrect email:";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
     }
 }

@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+import javax.validation.ValidationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,7 @@ class ItemServiceImplTest {
     private final BookingService bookingService;
     private final EntityManager entityManager;
     private final UserService userService;
-    private final ItemService itemService;
+    private final ItemServiceImpl itemService;
     private UserDto userDto;
     private ItemDto itemDto;
 
@@ -407,5 +408,25 @@ class ItemServiceImplTest {
         var exception = assertThrows(NotFoundException.class,
                 () -> itemService.get(id, userDto.getId()));
         assertEquals("Item with id#" + id + " does not exist", exception.getMessage());
+    }
+
+    @Test
+    void validateItemTest() {
+        ItemDto itemDto = new ItemDto(1, null, "test", true, 1, null);
+        ItemDto itemDto1 = new ItemDto(2, "test", null, true, 1, null);
+        ItemDto itemDto2 = new ItemDto(3, "test", "test", null, 1, null);
+
+
+        var exception = assertThrows(ValidationException.class,
+                () -> itemService.validateItem(itemDto));
+        assertEquals("Name cannot be blank", exception.getMessage());
+
+        var exception1 = assertThrows(ValidationException.class,
+                () -> itemService.validateItem(itemDto1));
+        assertEquals("Name cannot be blank", exception.getMessage());
+
+        var exception2 = assertThrows(ValidationException.class,
+                () -> itemService.validateItem(itemDto2));
+        assertEquals("Name cannot be blank", exception.getMessage());
     }
 }
