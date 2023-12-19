@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.service;
 
+import ru.practicum.shareit.item.dto.ItemDtoWithBooking;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -233,6 +234,32 @@ class ItemServiceImplTest {
     }
 
     @Test
+    void searchNotPagableTest() {
+        itemDto = itemService.save(
+                new ItemDto(
+                        1,
+                        "Car",
+                        "Red car",
+                        true,
+                        userDto.getId(),
+                        null),
+                null,
+                userDto.getId()
+        );
+        var itemDtos = itemService.search("car", itemDto.getOwnerId(), null, null);
+        var items = entityManager.createQuery(
+                        "SELECT item " +
+                                "FROM Item item " +
+                                "WHERE item.available = TRUE AND (UPPER(item.name) LIKE UPPER(CONCAT('%', :text, '%')) " +
+                                "OR UPPER(item.description) LIKE UPPER(CONCAT('%', :text, '%')))",
+                        Item.class)
+                .setParameter("text", "car")
+                .getResultList();
+        assertThat(items.get(0).getId(), equalTo(itemDtos.get(0).getId()));
+        assertThat(items.size(), equalTo(itemDtos.size()));
+    }
+
+    @Test
     void getItemsByRequestIdTest() {
         var requester = userService.save(
                 new UserDto(
@@ -353,6 +380,25 @@ class ItemServiceImplTest {
                 .getResultList();
         assertThat(itemsByRequestId.size(), equalTo(itemsByRequest.size()));
         assertThat(itemsByRequestId, empty());
+    }
+
+    @Test
+    void getItemsByRequestsTest() {
+        List<ItemRequest> itemRequest = new ArrayList<>();
+        List<ItemDto> requests = itemService.getItemsByRequests(itemRequest);
+        assertNotNull(requests);;
+    }
+
+    @Test
+    void getAllCommentsTest() {
+        var comments = itemService.getAllComments();
+        assertNotNull(comments);
+    }
+
+    @Test
+    void getAllItemsTest() {
+        List<ItemDtoWithBooking> items = itemService.getAllItems(1,1,1);
+        assertNotNull(items);
     }
 
     @Test

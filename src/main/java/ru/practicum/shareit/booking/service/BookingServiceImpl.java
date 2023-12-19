@@ -94,20 +94,16 @@ public class BookingServiceImpl implements BookingService {
         var userDto = userService.get(bookerId);
         var user = toUser(userDto);
         if (state == null || ALL.name().equals(state))
-            stream = bookingRepository
-                    .findBookingsByBookerIsOrderByStartDesc(user)
+            stream = bookingRepository.findBookingsByBookerIsOrderByStartDesc(user)
                     .stream();
         if (PAST.name().equals(state))
-            stream = bookingRepository
-                    .findBookingsByBookerIsAndEndBeforeOrderByStartDesc(user, now())
+            stream = bookingRepository.findBookingsByBookerIsAndEndBeforeOrderByStartDesc(user, now())
                     .stream();
         if (CURRENT.name().equals(state))
-            stream = bookingRepository
-                    .findBookingsByBookerIsAndStartBeforeAndEndAfterOrderByStartDesc(user, now(), now())
+            stream = bookingRepository.findBookingsByBookerIsAndStartBeforeAndEndAfterOrderByStartDesc(user, now(), now())
                     .stream();
         if (FUTURE.name().equals(state))
-            stream = bookingRepository
-                    .findBookingsByBookerIsAndStartIsAfterOrderByStartDesc(user, now())
+            stream = bookingRepository.findBookingsByBookerIsAndStartIsAfterOrderByStartDesc(user, now())
                     .stream();
         if (Arrays.stream(BookingStatus.values()).anyMatch(bookingStatus -> bookingStatus.name().equals(state)))
             stream = bookingRepository
@@ -153,24 +149,20 @@ public class BookingServiceImpl implements BookingService {
                         .findBookingsByBookerIsAndStartBeforeAndEndAfterOrderByStartDesc(user, now(), now())
                         .stream();
             else
-                stream = bookingRepository
-                        .findBookingsByBookerIsAndStartBeforeAndEndAfterOrderByStartDesc(user, now(), now(), pageRequest)
+                stream = bookingRepository.findBookingsByBookerIsAndStartBeforeAndEndAfterOrderByStartDesc(user, now(), now(), pageRequest)
                         .stream();
         }
         if (FUTURE.name().equals(state)) {
             if (pageRequest == null)
-                stream = bookingRepository
-                        .findBookingsByBookerIsAndStartIsAfterOrderByStartDesc(user, now())
+                stream = bookingRepository.findBookingsByBookerIsAndStartIsAfterOrderByStartDesc(user, now())
                         .stream();
             else
-                stream = bookingRepository
-                        .findBookingsByBookerIsAndStartIsAfterOrderByStartDesc(user, now(), pageRequest)
+                stream = bookingRepository.findBookingsByBookerIsAndStartIsAfterOrderByStartDesc(user, now(), pageRequest)
                         .stream();
         }
         if (Arrays.stream(BookingStatus.values()).anyMatch(bookingState -> bookingState.name().equals(state))) {
             if (pageRequest == null)
-                stream = bookingRepository
-                        .findBookingsByBookerIsAndStatusIsOrderByStartDesc(user, BookingStatus.valueOf(state))
+                stream = bookingRepository.findBookingsByBookerIsAndStatusIsOrderByStartDesc(user, BookingStatus.valueOf(state))
                         .stream();
             else
                 stream = bookingRepository
@@ -244,8 +236,7 @@ public class BookingServiceImpl implements BookingService {
             return stream
                     .map(BookingMapper::mapToBookingAllFieldsDto)
                     .collect(toList());
-        else
-            throw new ValidationException("Unknown state: " + state);
+        else throw new ValidationException("Unknown state: " + state);
     }
 
     private void validate(BookingSavingDto bookingSavingDto) {

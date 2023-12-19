@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
@@ -114,6 +115,21 @@ class ItemRequestServiceImplTest {
                 .getResultList();
         assertThat(allItemRequests.get(0).getId(), equalTo(itemRequests.get(0).getId()));
         assertThat(allItemRequests.size(), equalTo(itemRequests.size()));
+    }
+
+    @Test
+    void getAllItemRequestsFailTest() {
+        saveItemRequests();
+        var allItemRequests = itemRequestService.getAllItemRequests(null, null, user.getId());
+        var itemRequests = entityManager.createQuery(
+                        "SELECT itemRequest " +
+                                "FROM ItemRequest itemRequest " +
+                                "WHERE itemRequest.requester.id = :id " +
+                                "ORDER BY itemRequest.created DESC ",
+                        ItemRequest.class)
+                .setParameter("id", user.getId())
+                .getResultList();
+        assertNotEquals(allItemRequests.size(), equalTo(itemRequests.size()));
     }
 
     @Test

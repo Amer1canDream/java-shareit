@@ -96,7 +96,6 @@ public class ItemServiceImpl implements ItemService {
         var nextBooking = bookingRepository.findNextBookingByItemId(item.getId(), userId, LocalDateTime.now())
                 .stream()
                 .findFirst().orElse(null);;
-
         return mapToItemAllFieldsDto(item,
                 lastBooking,
                 nextBooking,
@@ -105,8 +104,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDtoWithBooking> getAllItems(Integer userId, Integer from, Integer size) {
-        return itemRepository.findByOwnerIdOrderByIdAsc(userId)
-                .stream()
+        return itemRepository.findByOwnerIdOrderByIdAsc(userId).stream()
                 .map(item -> {
                             List<Comment> comments = getCommentsByItemId(item);
                             Booking lastBooking = bookingRepository
@@ -115,8 +113,7 @@ public class ItemServiceImpl implements ItemService {
                                     .getTopByItemIdAndStartAfterOrderByStartAsc(item.getId(), LocalDateTime.now());
                             return ItemMapper.toItemDtoWithBooking(comments, lastBooking, nextBooking, item);
                         }
-                )
-                .collect(Collectors.toList());
+                ).collect(Collectors.toList());
     }
 
 
@@ -156,32 +153,27 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<CommentDto> getAllComments() {
-        return commentRepository.findAll()
-                .stream()
+        return commentRepository.findAll().stream()
                 .map(CommentMapper::mapToCommentDto)
                 .collect(toList());
     }
 
     @Override
     public List<CommentDto> getAllComments(Integer itemId) {
-        return commentRepository.findCommentByItem_IdIsOrderByCreated(itemId)
-                .stream()
+        return commentRepository.findCommentByItem_IdIsOrderByCreated(itemId).stream()
                 .map(CommentMapper::mapToCommentDto)
                 .collect(toList());
     }
 
     @Override
     public List<ItemDto> getItemsByRequestId(Integer requestId) {
-        return itemRepository.findAllByRequest_IdIs(requestId)
-                .stream()
-                .map(ItemMapper::mapToItemDto)
-                .collect(toList());
+        return itemRepository.findAllByRequest_IdIs(requestId).stream()
+                .map(ItemMapper::mapToItemDto).collect(toList());
     }
 
     @Override
     public List<ItemDto> getItemsByRequests(List<ItemRequest> requests) {
-        return itemRepository.findAllByRequestIn(requests)
-                .stream()
+        return itemRepository.findAllByRequestIn(requests).stream()
                 .map(ItemMapper::mapToItemDto)
                 .collect(toList());
     }

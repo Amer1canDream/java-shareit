@@ -2,6 +2,7 @@ package ru.practicum.shareit.user.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,6 +84,20 @@ class UserServiceImplTest {
         assertThat(user.getName(), equalTo(userDto.getName()));
         assertThat(user.getId(), notNullValue());
     }
+
+    @Test
+    void saveExceptionTest() {
+        userService.save(userDto);
+        UserDto userDto1 = saveUserDto("Jack", "jack@mail.com");
+        Exception exception = assertThrows(ConflictException.class, () -> {
+            userService.save(userDto1);;
+        });
+        String expectedMessage = "Email already in use";
+        String actualMessage = exception.getMessage();
+
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
 
     @Test
     void updateTest() {
