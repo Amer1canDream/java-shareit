@@ -222,6 +222,16 @@ public class BookingServiceImpl implements BookingService {
                         .findBookingsByItemOwnerAndStartAfterOrderByStartDesc(user, now(), pageRequest)
                         .stream();
         }
+        if (Arrays.stream(BookingStatus.values()).anyMatch(bookingState -> bookingState.name().equals(state))) {
+            if (pageRequest == null)
+                stream = bookingRepository
+                        .findBookingsByItemOwnerIsAndStatusIsOrderByStartDesc(user, BookingStatus.valueOf(state))
+                        .stream();
+            else
+                stream = bookingRepository
+                        .findBookingsByItemOwnerIsAndStatusIsOrderByStartDesc(user, BookingStatus.valueOf(state), pageRequest)
+                        .stream();
+        }
         if (stream != null)
             return stream
                     .map(BookingMapper::mapToBookingAllFieldsDto)
