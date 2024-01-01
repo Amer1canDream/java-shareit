@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.request.service.ItemRequestService;
 
 import java.util.List;
 
@@ -17,13 +18,18 @@ import java.util.List;
 @RequestMapping("/items")
 public class ItemController {
     private static final String HEADER_SHARER_USER_ID = "X-Sharer-User-Id";
+    private final ItemRequestService itemRequestService;
     private final ItemService itemService;
 
     @PostMapping()
     public ItemDto save(@RequestHeader(value = HEADER_SHARER_USER_ID, required = false) Integer userId,
                         @RequestBody ItemDto itemDto) {
+        var itemRequestDto = itemDto.getRequestId() != null
+                ? itemRequestService.getItemRequestById(itemDto.getRequestId(), userId)
+                : null;
         log.debug("Создание вещи у пользователя с id {}", userId);
-        return itemService.save(itemDto, userId);
+
+        return itemService.save(itemDto, itemRequestDto, userId);
     }
 
     @PatchMapping("/{itemId}")

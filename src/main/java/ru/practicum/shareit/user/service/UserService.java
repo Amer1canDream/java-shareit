@@ -77,14 +77,14 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    private void validate(UserDto userDto) {
+    void validate(UserDto userDto) {
         if (userDto.getEmail() == null)
             throw new ValidationException("Email cannot be empty.");
         if (userDto.getEmail().isBlank() || !userDto.getEmail().contains("@"))
             throw new ValidationException("Incorrect email: " + userDto.getEmail() + ".");
     }
 
-    private void validatePatch(UserDto userDto) {
+    void validatePatch(UserDto userDto) {
         if ((userDto.getEmail() != null) && (!userDto.getEmail().contains("@"))) {
             throw new ValidationException("Incorrect email: " + userDto.getEmail() + ".");
         }

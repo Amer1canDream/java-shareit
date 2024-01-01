@@ -11,7 +11,6 @@ import ru.practicum.shareit.booking.dto.BookingSavingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
-import ru.practicum.shareit.booking.model.BookingTimeState;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemAllFieldsDto;
@@ -54,6 +53,7 @@ public class BookingServiceImpl implements BookingService {
         validate(bookingSavingDto);
         var booker = toUser(userService.get(bookerId));
         var item = mapToItem(itemDto);
+
         var booking = mapToBooking(bookingSavingDto);
         booking.setStatus(BookingStatus.WAITING);
         booking.setBooker(booker);
@@ -94,20 +94,16 @@ public class BookingServiceImpl implements BookingService {
         var userDto = userService.get(bookerId);
         var user = toUser(userDto);
         if (state == null || ALL.name().equals(state))
-            stream = bookingRepository
-                    .findBookingsByBookerIsOrderByStartDesc(user)
+            stream = bookingRepository.findBookingsByBookerIsOrderByStartDesc(user)
                     .stream();
         if (PAST.name().equals(state))
-            stream = bookingRepository
-                    .findBookingsByBookerIsAndEndBeforeOrderByStartDesc(user, now())
+            stream = bookingRepository.findBookingsByBookerIsAndEndBeforeOrderByStartDesc(user, now())
                     .stream();
         if (CURRENT.name().equals(state))
-            stream = bookingRepository
-                    .findBookingsByBookerIsAndStartBeforeAndEndAfterOrderByStartDesc(user, now(), now())
+            stream = bookingRepository.findBookingsByBookerIsAndStartBeforeAndEndAfterOrderByStartDesc(user, now(), now())
                     .stream();
         if (FUTURE.name().equals(state))
-            stream = bookingRepository
-                    .findBookingsByBookerIsAndStartIsAfterOrderByStartDesc(user, now())
+            stream = bookingRepository.findBookingsByBookerIsAndStartIsAfterOrderByStartDesc(user, now())
                     .stream();
         if (Arrays.stream(BookingStatus.values()).anyMatch(bookingStatus -> bookingStatus.name().equals(state)))
             stream = bookingRepository
@@ -153,24 +149,20 @@ public class BookingServiceImpl implements BookingService {
                         .findBookingsByBookerIsAndStartBeforeAndEndAfterOrderByStartDesc(user, now(), now())
                         .stream();
             else
-                stream = bookingRepository
-                        .findBookingsByBookerIsAndStartBeforeAndEndAfterOrderByStartDesc(user, now(), now(), pageRequest)
+                stream = bookingRepository.findBookingsByBookerIsAndStartBeforeAndEndAfterOrderByStartDesc(user, now(), now(), pageRequest)
                         .stream();
         }
         if (FUTURE.name().equals(state)) {
             if (pageRequest == null)
-                stream = bookingRepository
-                        .findBookingsByBookerIsAndStartIsAfterOrderByStartDesc(user, now())
+                stream = bookingRepository.findBookingsByBookerIsAndStartIsAfterOrderByStartDesc(user, now())
                         .stream();
             else
-                stream = bookingRepository
-                        .findBookingsByBookerIsAndStartIsAfterOrderByStartDesc(user, now(), pageRequest)
+                stream = bookingRepository.findBookingsByBookerIsAndStartIsAfterOrderByStartDesc(user, now(), pageRequest)
                         .stream();
         }
         if (Arrays.stream(BookingStatus.values()).anyMatch(bookingState -> bookingState.name().equals(state))) {
             if (pageRequest == null)
-                stream = bookingRepository
-                        .findBookingsByBookerIsAndStatusIsOrderByStartDesc(user, BookingStatus.valueOf(state))
+                stream = bookingRepository.findBookingsByBookerIsAndStatusIsOrderByStartDesc(user, BookingStatus.valueOf(state))
                         .stream();
             else
                 stream = bookingRepository
@@ -184,10 +176,6 @@ public class BookingServiceImpl implements BookingService {
         else
             throw new ValidationException("Unknown state: " + state);
     }
-    /**
-    Было два метода, один метод лишний с тем замечанием, что вы указали. В текущем методе такая проверка не нужна.
-     И это 14 ТЗ еще, хотя я наперед добавил сюда фич из 15.
-     */
 
     @Override
     public List<BookingAllFieldsDto> getBookingsByOwnerId(Integer userId, String state, Integer from, Integer size) {
@@ -248,8 +236,7 @@ public class BookingServiceImpl implements BookingService {
             return stream
                     .map(BookingMapper::mapToBookingAllFieldsDto)
                     .collect(toList());
-        else
-            throw new ValidationException("Unknown state: " + state);
+        else throw new ValidationException("Unknown state: " + state);
     }
 
     private void validate(BookingSavingDto bookingSavingDto) {
@@ -264,25 +251,5 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidationException("Incorrect end booking date");
         if (bookingSavingDto.getStart().equals(bookingSavingDto.getEnd()))
             throw new ValidationException("Start and end date the same");
-    }
-
-    private void validateListOfBookings(List<Booking> bookingList) {
-        if (bookingList.isEmpty()) {
-            throw new NotFoundException("There are not bookings for that user");
-        }
-    }
-
-    private static BookingTimeState getState(String stateStr) {
-        BookingTimeState state;
-        if (stateStr == null) {
-            state = BookingTimeState.ALL;
-        } else {
-            try {
-                state = BookingTimeState.valueOf(stateStr);
-            } catch (Exception e) {
-                throw new ValidationException(String.format("Unknown state: %s", stateStr));
-            }
-        }
-        return state;
     }
 }
