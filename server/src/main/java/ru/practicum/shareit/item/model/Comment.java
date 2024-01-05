@@ -7,8 +7,6 @@ import javax.persistence.*;
 
 import java.time.LocalDateTime;
 
-import static javax.persistence.GenerationType.IDENTITY;
-
 @Entity
 @Getter
 @Setter
