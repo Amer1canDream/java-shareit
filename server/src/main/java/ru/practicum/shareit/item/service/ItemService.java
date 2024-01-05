@@ -18,11 +18,11 @@ public interface ItemService {
 
     List<CommentDto> getAllComments();
 
-    List<ItemDto> getItemsByRequestId(Integer requestId);
+    ItemAllFieldsDto get(Integer id, Integer itemId);
 
     List<ItemDto> getItemsByRequests(List<ItemRequest> requests);
 
-    ItemAllFieldsDto get(Integer id, Integer itemId);
+    List<ItemDto> getItemsByRequestId(Integer requestId);
 
     List<ItemDtoWithBooking> getAllItems(Integer userId, Integer from, Integer size);
 
