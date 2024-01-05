@@ -28,7 +28,7 @@ public class ItemController {
                 ? itemRequestService.getItemRequestById(itemDto.getRequestId(), userId)
                 : null;
         log.debug("Создание вещи у пользователя с id {}", userId);
-        log.debug("Создание вещи у пользователя с id {}", userId);
+
         return itemService.save(itemDto, itemRequestDto, userId);
     }
 

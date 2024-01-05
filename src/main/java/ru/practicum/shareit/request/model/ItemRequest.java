@@ -7,9 +7,14 @@ import javax.persistence.*;
 
 import java.time.LocalDateTime;
 
+<<<<<<<< HEAD:server/src/main/java/ru/practicum/shareit/request/model/ItemRequest.java
 /**
  * TODO Sprint add-item-requests.
  */
+========
+import static javax.persistence.GenerationType.IDENTITY;
+
+>>>>>>>> main:src/main/java/ru/practicum/shareit/request/model/ItemRequest.java
 @Entity
 @Getter
 @Setter
